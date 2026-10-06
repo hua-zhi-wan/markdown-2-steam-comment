@@ -20,9 +20,6 @@
   </div>
   <div class="top-actions">
     <button id="btn-help" class="btn btn-ghost" type="button">格式说明</button>
-    <button id="btn-sample" class="btn btn-ghost" type="button">载入示例</button>
-    <button id="btn-clear" class="btn btn-ghost" type="button">清空</button>
-    <button id="btn-download" class="btn btn-ghost" type="button">下载</button>
     <button id="btn-copy" class="btn btn-primary" type="button">复制 BBCode</button>
   </div>
 </header>
@@ -96,7 +93,7 @@
           <tr><td><code>![说明](图片网址)</code></td><td><code>[img]网址[/img]</code></td><td>仅支持网络图片 URL</td></tr>
           <tr><td><code>[![说明](图片)](链接)</code></td><td><code>[url=…][img]…[/img][/url]</code></td><td>带链接的图片</td></tr>
           <tr><td><code>!!!剧透内容!!!</code></td><td><code>[spoiler]…[/spoiler]</code></td><td>点击前隐藏，可跨行</td></tr>
-          <tr><td><code>&gt; 引用</code></td><td><code>[quote]…[/quote]</code></td><td>末行写 <code>— 作者</code> 可生成 <code>[quote=作者]</code></td></tr>
+          <tr><td><code>&gt; 引用</code></td><td><code>[quote]…[/quote]</code></td><td>引用块</td></tr>
           <tr><td><code>- 项目</code></td><td><code>[list] [*] [/list]</code></td><td>无序列表</td></tr>
           <tr><td><code>1. 项目</code></td><td><code>[olist] [*] [/olist]</code></td><td>有序列表，序号始终从 1 开始</td></tr>
           <tr><td><code>GFM 表格</code></td><td><code>[table][tr][th][td]</code></td><td>列对齐会被忽略</td></tr>
@@ -124,6 +121,7 @@
 
 <div id="toast" class="toast hidden"></div>
 
+<script src="marked.min.js"></script>
 <script src="converter.js"></script>
 <script src="preview.js"></script>
 <script src="app.js"></script>
