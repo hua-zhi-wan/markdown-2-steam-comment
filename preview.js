@@ -58,13 +58,24 @@
     });
   }
 
+  /* 块级上下文：其边界处的空白行不产生 <br>（块级元素间距由 margin 承担） */
+  const BLOCK_CONTEXTS = {
+    '#root': 1, h1: 1, h2: 1, h3: 1, quote: 1, spoiler: 1,
+    li: 1, td: 1, th: 1, center: 1
+  };
+
   function textToHtml(txt, frameName) {
-    const lines = txt.split('\n');
-    const parts = lines.map(function (line) {
+    const lines = txt.split('\n').map(function (line) {
       if (line.trim() === '') return '';
       return linkifyLine(escapeHtml(line));
     });
-    return parts.join('<br>');
+
+    if (BLOCK_CONTEXTS[frameName]) {
+      // 仅折叠片段首尾的空行，中间的空行（段落间隔）保留
+      while (lines.length && lines[0] === '') lines.shift();
+      while (lines.length && lines[lines.length - 1] === '') lines.pop();
+    }
+    return lines.join('<br>');
   }
 
   /* ---------- 颜色 / 尺寸校验 ---------- */
