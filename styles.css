@@ -448,7 +448,7 @@ body {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 10px;
-  width: min(820px, 100%);
+  width: min(900px, 100%);
   max-height: 86vh;
   display: flex;
   flex-direction: column;
@@ -473,38 +473,43 @@ body {
 }
 .modal-close:hover { color: var(--text-bright); }
 .modal-body { padding: 16px 20px; overflow: auto; }
-.modal-body h3 { font-size: 14px; color: var(--text-bright); margin: 18px 0 8px; }
-.modal-body h3:first-child { margin-top: 4px; }
 
-.help-table {
+/* 格式说明：由 marked 渲染 README 章节，以下为其内容元素的样式 */
+.help-body { font-size: 13px; }
+.help-body > :first-child { margin-top: 0; }
+.help-body h3 {
+  font-size: 14px;
+  color: var(--text-bright);
+  margin: 18px 0 8px;
+}
+.help-body p { margin: 8px 0; }
+.help-body ul { margin: 8px 0; padding-left: 20px; }
+.help-body li { margin: 5px 0; }
+.help-body strong { color: var(--text-bright); }
+.help-body a { color: var(--accent-2); text-decoration: none; }
+.help-body a:hover { text-decoration: underline; }
+
+.help-body table {
   width: 100%;
   border-collapse: collapse;
   font-size: 12.5px;
 }
-.help-table th, .help-table td {
+.help-body th, .help-body td {
   border: 1px solid var(--border-soft);
   padding: 7px 10px;
   text-align: left;
   vertical-align: top;
 }
-.help-table th { background: var(--bg-2); color: var(--text-bright); }
-.help-table code, .help-list code, .help-tip code {
+.help-body th { background: var(--bg-2); color: var(--text-bright); white-space: nowrap; }
+
+.help-body code {
   font-family: var(--mono);
   font-size: 11.5px;
   background: rgba(102, 192, 244, 0.1);
   padding: 1px 5px;
   border-radius: 3px;
   color: #bfe2f7;
-}
-.help-list { margin: 0; padding-left: 20px; }
-.help-list li { margin: 5px 0; }
-.help-tip {
-  margin-top: 16px;
-  padding: 10px 14px;
-  background: var(--info-bg);
-  border: 1px solid var(--info-border);
-  border-radius: 6px;
-  font-size: 12.5px;
+  white-space: nowrap;
 }
 
 /* ========== Toast ========== */

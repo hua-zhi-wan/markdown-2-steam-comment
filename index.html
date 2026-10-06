@@ -70,54 +70,14 @@
   <span>参考：<a href="https://steamcommunity.com/comment/Guide/formattinghelp" target="_blank" rel="noopener">Steam Text Formatting 官方文档</a></span>
 </footer>
 
-<!-- 格式说明弹窗 -->
+<!-- 格式说明弹窗（内容由 help-content.js 提供，来源为 README.md） -->
 <div class="modal-mask hidden" id="help-modal">
   <div class="modal">
     <div class="modal-head">
       <h2>Markdown → Steam BBCode 格式对照</h2>
       <button class="modal-close" id="help-close" type="button" aria-label="关闭">&times;</button>
     </div>
-    <div class="modal-body">
-
-      <h3>支持的转换</h3>
-      <table class="help-table">
-        <thead><tr><th>Markdown 写法</th><th>Steam BBCode</th><th>说明</th></tr></thead>
-        <tbody>
-          <tr><td><code># ## ###</code></td><td><code>[h1] [h2] [h3]</code></td><td>标题，仅限 1–3 级</td></tr>
-          <tr><td><code>**粗体**</code></td><td><code>[b]…[/b]</code></td><td><code>__粗体__</code> 等价</td></tr>
-          <tr><td><code>*斜体*</code></td><td><code>[i]…[/i]</code></td><td><code>_斜体_</code> 等价</td></tr>
-          <tr><td><code>~~删除线~~</code></td><td><code>[strike]…[/strike]</code></td><td>—</td></tr>
-          <tr><td><code>++下划线++</code></td><td><code>[u]…[/u]</code></td><td>扩展语法（标准 Markdown 无下划线）</td></tr>
-          <tr><td><code>***粗斜体***</code></td><td><code>[b][i]…[/i][/b]</code></td><td>样式可嵌套</td></tr>
-          <tr><td><code>`行内代码`</code></td><td><code>[code]…[/code]</code></td><td>等宽字体</td></tr>
-          <tr><td><code>``` 代码块 ```</code></td><td><code>[code]…[/code]</code></td><td>语言标识会被忽略并提示</td></tr>
-          <tr><td><code>[文字](网址)</code></td><td><code>[url=网址]文字[/url]</code></td><td>链接标题 title 会被忽略</td></tr>
-          <tr><td><code>![说明](图片网址)</code></td><td><code>[img]网址[/img]</code></td><td>仅支持网络图片 URL</td></tr>
-          <tr><td><code>[![说明](图片)](链接)</code></td><td><code>[url=…][img]…[/img][/url]</code></td><td>带链接的图片</td></tr>
-          <tr><td><code>!!!剧透内容!!!</code></td><td><code>[spoiler]…[/spoiler]</code></td><td>点击前隐藏，可跨行</td></tr>
-          <tr><td><code>&gt; 引用</code></td><td><code>[quote]…[/quote]</code></td><td>引用块</td></tr>
-          <tr><td><code>- 项目</code></td><td><code>[list] [*] [/list]</code></td><td>无序列表</td></tr>
-          <tr><td><code>1. 项目</code></td><td><code>[olist] [*] [/olist]</code></td><td>有序列表，序号始终从 1 开始</td></tr>
-          <tr><td><code>GFM 表格</code></td><td><code>[table][tr][th][td]</code></td><td>列对齐会被忽略</td></tr>
-          <tr><td><code>---</code></td><td><code>[hr][/hr]</code></td><td>分割线</td></tr>
-          <tr><td><code>- [ ] / - [x]</code></td><td><code>☐ / ☑</code></td><td>任务框转为符号</td></tr>
-          <tr><td>裸 YouTube / Steam 链接（独占一行）</td><td>保持原样</td><td>Steam 会自动生成视频 / 商店 / 创意工坊小组件</td></tr>
-        </tbody>
-      </table>
-
-      <h3>会被忽略并给出提示的格式</h3>
-      <ul class="help-list">
-        <li><strong>四级及以上标题</strong>（<code>####</code>–<code>######</code>）：Steam 不支持，自动降级为粗体；</li>
-        <li><strong>表格对齐、代码语言、链接 title、HTML 属性</strong>：Steam 无对应能力，直接忽略；</li>
-        <li><strong>嵌套列表</strong>：Steam 列表不支持嵌套，子项会被展平；</li>
-        <li><strong>脚注</strong>（<code>[^1]</code>）、<strong>数学公式</strong>（<code>$…$</code>）、<strong>高亮</strong>（<code>==文字==</code>）：无对应标签，保留/还原为普通文字；</li>
-        <li><strong>YAML 前置元数据</strong>（<code>---</code> 开头的配置块）：直接移除；</li>
-        <li><strong>HTML 标签</strong>：<code>&lt;b&gt; &lt;i&gt; &lt;a&gt; &lt;img&gt;</code> 等 Steam 可识别的会转换；<code>&lt;script&gt; &lt;style&gt; &lt;div&gt;</code> 等不支持的标签会被移除；</li>
-        <li><strong>无法解析的引用链接</strong>：提示定义缺失，按普通文本处理。</li>
-      </ul>
-
-      <p class="help-tip">提示：警告信息会显示在右栏上方，并附带原始行号，方便定位与修改。</p>
-    </div>
+    <div class="modal-body help-body" id="help-body"></div>
   </div>
 </div>
 

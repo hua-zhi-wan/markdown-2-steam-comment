@@ -99,9 +99,40 @@
     }
   });
 
-  /* 帮助弹窗 */
+  /* 帮助弹窗：直接读取 README.md，抽取 HELP:START / HELP:END 章节后用 marked 渲染 */
   const helpModal = $('help-modal');
-  $('btn-help').addEventListener('click', function () { helpModal.classList.remove('hidden'); });
+  const helpBody = $('help-body');
+  let helpState = 'idle'; // idle | loading | done | error
+  function renderHelp() {
+    if (helpState === 'loading' || helpState === 'done') return;
+    helpState = 'loading';
+    helpBody.innerHTML = '<p>正在读取 README.md…</p>';
+    fetch('README.md', { cache: 'no-store' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.text();
+      })
+      .then(function (text) {
+        const start = text.indexOf('<!-- HELP:START -->');
+        const end = text.indexOf('<!-- HELP:END -->');
+        const section = start !== -1 && end !== -1
+          ? text.slice(start + '<!-- HELP:START -->'.length, end)
+          : text;
+        helpBody.innerHTML = window.marked.parse(section);
+        helpState = 'done';
+      })
+      .catch(function () {
+        helpBody.innerHTML =
+          '<p>当前以 <code>file://</code> 方式直接双击打开页面，浏览器安全策略禁止页面读取本地 README.md 文件。</p>' +
+          '<p>可以选择：</p>' +
+          '<ul>' +
+          '<li>直接查看 <a href="README.md" target="_blank" rel="noopener">README.md</a>；</li>' +
+          '<li>或在项目目录运行 <code>python -m http.server</code>，通过 <code>http://localhost:8000</code> 打开，格式说明即可正常内联显示。</li>' +
+          '</ul>';
+        helpState = 'error';
+      });
+  }
+  $('btn-help').addEventListener('click', function () { renderHelp(); helpModal.classList.remove('hidden'); });
   $('help-close').addEventListener('click', function () { helpModal.classList.add('hidden'); });
   helpModal.addEventListener('click', function (e) {
     if (e.target === helpModal) helpModal.classList.add('hidden');
