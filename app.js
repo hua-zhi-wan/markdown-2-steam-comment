@@ -8,6 +8,7 @@
   const $ = function (id) { return document.getElementById(id); };
 
   const input = $('md-input');
+  const gutter = $('md-gutter');
   const preview = $('preview');
   const bbcodeEl = $('bbcode');
   const warningsEl = $('warnings');
@@ -24,6 +25,38 @@
     '不支持的格式会在上方给出提示。';
 
   let lastBbcode = '';
+  let lastWarnings = [];
+
+  /* 行号栏：按行号列出数字，并在有警告 / 提示的行做标记 */
+  function renderGutter(warnings) {
+    const lines = input.value.split('\n');
+    const marks = {}; // 行号(1-based) -> { level, msgs }
+    warnings.forEach(function (w) {
+      if (!w.line) return;
+      const m = marks[w.line] || (marks[w.line] = { level: 'info', msgs: [] });
+      if (w.level === 'warning') m.level = 'warning'; // 警告优先级高于提示
+      m.msgs.push(w.message);
+    });
+
+    const html = lines.map(function (_, i) {
+      const m = marks[i + 1];
+      const cls = m ? ' class="ln has-' + m.level + '"' : ' class="ln"';
+      const data = m ? ' data-mark="1"' : '';
+      return '<div' + cls + data + '>' + (i + 1) + '</div>';
+    }).join('');
+    gutter.innerHTML = html;
+
+    const lineEls = gutter.querySelectorAll('.ln');
+    lineEls.forEach(function (el, i) {
+      const m = marks[i + 1];
+      if (m) el.title = '第 ' + (i + 1) + ' 行：' + m.msgs.join('；');
+    });
+
+    gutter.scrollTop = input.scrollTop;
+  }
+
+  /* textarea 与行号栏滚动同步 */
+  input.addEventListener('scroll', function () { gutter.scrollTop = input.scrollTop; });
 
   function renderWarnings(warnings) {
     if (!warnings.length) {
@@ -50,15 +83,19 @@
       keepLineBreaks: optBreaks.checked
     });
     lastBbcode = result.bbcode;
+    lastWarnings = result.warnings;
     preview.innerHTML = window.BBCodePreview.render(result.bbcode);
     bbcodeEl.textContent = result.bbcode;
     mdCount.textContent = input.value.length + ' 字符';
     bbCount.textContent = result.bbcode.length + ' 字符';
     renderWarnings(result.warnings);
+    renderGutter(result.warnings);
   }
 
   let timer = null;
   input.addEventListener('input', function () {
+    // 行数变化时立即刷新行号（标记沿用上一次结果），其余转换走防抖
+    if (gutter.children.length !== input.value.split('\n').length) renderGutter(lastWarnings);
     if (timer) clearTimeout(timer);
     timer = setTimeout(update, 120);
   });

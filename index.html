@@ -37,8 +37,11 @@
       </label>
       <span class="pane-meta" id="md-count">0 字符</span>
     </div>
-    <textarea id="md-input" spellcheck="false" autocomplete="off" autocorrect="off"
-      placeholder="在此输入或粘贴 Markdown 文本，右侧将实时显示转换结果……"></textarea>
+    <div class="editor">
+      <div class="gutter" id="md-gutter" aria-hidden="true"></div>
+      <textarea id="md-input" spellcheck="false" autocomplete="off" autocorrect="off"
+        placeholder="在此输入或粘贴 Markdown 文本，右侧将实时显示转换结果……"></textarea>
+    </div>
   </section>
 
   <!-- 右栏：预览 / 代码 -->
@@ -66,11 +69,13 @@
 </main>
 
 <footer class="footer">
+ <div class="footer-inner">
   <span>所有转换均在你的浏览器内完成，文本不会被上传。</span>
   <span>参考：<a href="https://steamcommunity.com/comment/Guide/formattinghelp" target="_blank" rel="noopener">Steam Text Formatting 官方文档</a></span>
+ </div>
 </footer>
 
-<!-- 格式说明弹窗（内容由 help-content.js 提供，来源为 README.md） -->
+<!-- 格式说明弹窗（运行时直接读取 README.md 渲染） -->
 <div class="modal-mask hidden" id="help-modal">
   <div class="modal">
     <div class="modal-head">
