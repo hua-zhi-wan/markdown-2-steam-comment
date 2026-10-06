@@ -37,8 +37,8 @@ body {
     radial-gradient(1200px 500px at 80% -100px, rgba(102, 192, 244, 0.08), transparent 60%),
     var(--bg);
   color: var(--text);
-  font-size: 14px;
-  line-height: 1.55;
+  font-size: 15px;
+  line-height: 1.65;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -48,13 +48,19 @@ body {
 
 /* ========== 顶栏 ========== */
 .topbar {
+  background: linear-gradient(180deg, #1b2838, #17222f);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
   padding: 12px 20px;
-  background: linear-gradient(180deg, #1b2838, #17222f);
-  border-bottom: 1px solid var(--border);
   flex-wrap: wrap;
 }
 
@@ -120,8 +126,11 @@ body {
 .workspace {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 14px;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
   padding: 14px 20px;
   min-height: 0;
 }
@@ -176,7 +185,7 @@ body {
   background: #18242f;
   color: #d7e3ee;
   font-family: var(--mono);
-  font-size: 13.5px;
+  font-size: 14.5px;
   line-height: 1.65;
   padding: 14px 16px;
   tab-size: 2;
@@ -212,7 +221,7 @@ body {
   margin: 0;
   padding: 14px 16px;
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.65;
   color: #d3e0ec;
   background: #18242f;
