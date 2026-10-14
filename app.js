@@ -27,7 +27,60 @@
   let lastBbcode = '';
   let lastWarnings = [];
 
-  /* 行号栏：按行号列出数字，并在有警告 / 提示的行做标记 */
+  /* 行号栏：按行号列出数字，并在有警告 / 提示的行做标记。
+     由于 textarea 开启软换行，一个逻辑行可能占用多个视觉行，
+     这里用一个与 textarea 字体、宽度完全一致的隐藏镜像元素，
+     逐行测量其实际占用的视觉行数，再让对应行号条目占据同等高度，
+     从而保证行号与正文在换行时依然严格对齐。 */
+  let gutterMirror = null;
+
+  function escHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function measureRows(lines) {
+    if (!gutterMirror) {
+      gutterMirror = document.createElement('div');
+      gutterMirror.setAttribute('aria-hidden', 'true');
+      gutterMirror.style.cssText =
+        'position:absolute;top:-99999px;left:0;visibility:hidden;pointer-events:none;' +
+        'margin:0;border:0;padding:0;white-space:pre-wrap;overflow-wrap:break-word;';
+      document.body.appendChild(gutterMirror);
+    }
+    const cs = getComputedStyle(input);
+    const rowH = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.65;
+    // textarea 文本可用宽度 = clientWidth 减去左右内边距（clientWidth 已排除滚动条）
+    const contentW = input.clientWidth -
+      parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+
+    gutterMirror.style.width = Math.max(0, contentW) + 'px';
+    gutterMirror.style.fontFamily = cs.fontFamily;
+    gutterMirror.style.fontSize = cs.fontSize;
+    gutterMirror.style.lineHeight = cs.lineHeight;
+    gutterMirror.style.letterSpacing = cs.letterSpacing;
+    gutterMirror.style.wordSpacing = cs.wordSpacing;
+    gutterMirror.style.tabSize = cs.tabSize;
+
+    gutterMirror.innerHTML = lines.map(function (line) {
+      // 空行用零宽空格占位，确保仍生成一个行盒
+      return '<span>' + (line === '' ? '\u200b' : escHtml(line)) + '</span>';
+    }).join('\n');
+
+    const spans = gutterMirror.querySelectorAll('span');
+    const rect = gutterMirror.getBoundingClientRect();
+    const totalH = rect.height;
+    const tops = [];
+    for (let i = 0; i < spans.length; i++) {
+      tops.push(spans[i].getBoundingClientRect().top - rect.top);
+    }
+
+    const rows = lines.map(function (_, i) {
+      const next = i + 1 < lines.length ? tops[i + 1] : totalH;
+      return Math.max(1, Math.round((next - tops[i]) / rowH));
+    });
+    return { rows: rows, rowH: rowH };
+  }
+
   function renderGutter(warnings) {
     const lines = input.value.split('\n');
     const marks = {}; // 行号(1-based) -> { level, msgs }
@@ -38,13 +91,13 @@
       m.msgs.push(w.message);
     });
 
-    const html = lines.map(function (_, i) {
+    const meas = measureRows(lines);
+    gutter.innerHTML = lines.map(function (_, i) {
       const m = marks[i + 1];
-      const cls = m ? ' class="ln has-' + m.level + '"' : ' class="ln"';
-      const data = m ? ' data-mark="1"' : '';
-      return '<div' + cls + data + '>' + (i + 1) + '</div>';
+      const cls = 'ln' + (m ? ' has-' + m.level : '');
+      const h = (meas.rows[i] * meas.rowH).toFixed(3) + 'px';
+      return '<div class="' + cls + '" style="height:' + h + '">' + (i + 1) + '</div>';
     }).join('');
-    gutter.innerHTML = html;
 
     const lineEls = gutter.querySelectorAll('.ln');
     lineEls.forEach(function (el, i) {
@@ -57,6 +110,9 @@
 
   /* textarea 与行号栏滚动同步 */
   input.addEventListener('scroll', function () { gutter.scrollTop = input.scrollTop; });
+
+  /* 窗口宽度变化会改变软换行的折行结果，需要重新测量 */
+  window.addEventListener('resize', function () { renderGutter(lastWarnings); });
 
   function renderWarnings(warnings) {
     if (!warnings.length) {
